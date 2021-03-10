@@ -130,7 +130,7 @@ int main() {
 		dArr,
 		0, (unsigned int)(endTime - startTime));
 
-	printf("Press any key to continue . . .");
+	printf("Press Enter to continue . . .");
 	(void)getchar();
 	return 0;
 }
