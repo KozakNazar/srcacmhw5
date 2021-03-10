@@ -1,12 +1,17 @@
 // don't forget to use compilation key for Linux: -lm
 /**************************************************************************
 * N.Kozak // Lviv'2020 // ACM // Compute result and search result example *
-*    file: acmhw5.c                                                       *
+*    file: acmhw5.cpp                                                     *
 ***************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h> 
 #include <time.h>
+
+#define NANOSECONDS_PER_SECOND_NUMBER 1000000000
+
+#define DATA_TYPE_ float
+#define DATA_TYPE  volatile DATA_TYPE_
 
 #define A  0.33333333
 #define B  0.
@@ -15,52 +20,41 @@
 #define REPEAT_COUNT 1000000
 #define REPEATOR(count, code) \
 for (unsigned int indexIteration = (count); indexIteration--;){ code; }
-#define TWO_VALUES_SELECTOR(variable, firstValue, secondValue) \
-	(variable) = indexIteration % 2 ? (firstValue) : (secondValue);
 
 float getCurrentTime(){
 	clock_t time = clock();
 	if (time != (clock_t)-1) {
 		return ((float)time / (float)CLOCKS_PER_SEC);
 	}
-	return 0.; // else 	
+	return 0.; // else
 }
 
-void run_native(float * const dArr){
-	float * const dAC = dArr;
-	float * const dA = &dAC[0];
-	float * const dC = &dAC[1];
-	float * const dB = &dArr[2];
-	float * const dResult = &dArr[4];
-	float * const dX1 = &dResult[1];
-	float * const dX2 = &dResult[0];
+void run_native(DATA_TYPE * const dArr){
+	DATA_TYPE * const dAC = dArr;
+	DATA_TYPE * const dA = &dAC[0];
+	DATA_TYPE * const dC = &dAC[1];
+	DATA_TYPE * const dB = &dArr[2];
+	DATA_TYPE * const dResult = &dArr[4];
+	DATA_TYPE * const dX1 = &dResult[1];
+	DATA_TYPE * const dX2 = &dResult[0];
 
-	REPEATOR(REPEAT_COUNT,
-		TWO_VALUES_SELECTOR(*dA, 4., A);
-	TWO_VALUES_SELECTOR(*dB, 3., B);
-	TWO_VALUES_SELECTOR(*dC, 1., C);
-	float vD = sqrt((*dB)*(*dB) - 4.*(*dA)*(*dC));
-	(*dX1) = (-(*dB) + vD) / (2.*(*dA));
-	(*dX2) = (-(*dB) - vD) / (2.*(*dA));
-	)
+	DATA_TYPE vD = (DATA_TYPE_)sqrt((double)*dB* *dB - 4.* *dA * *dC);
+	*dX1 = (-*dB + vD) / ((DATA_TYPE_)2.* *dA);
+	*dX2 = (-*dB - vD) / ((DATA_TYPE_)2.* *dA);
 }
 
-void run_search(float * const dArr){
-	float * const dAC = dArr;
-	float * const dA = &dAC[0];
-	float * const dC = &dAC[1];
-	float * const dB = &dArr[2];
-	float * const dResult = &dArr[4];
-	float * const dX1 = &dResult[1];
-	float * const dX2 = &dResult[0];
+void run_search(DATA_TYPE * const dArr){
+	DATA_TYPE * const dAC = dArr;
+	DATA_TYPE * const dA = &dAC[0];
+	DATA_TYPE * const dC = &dAC[1];
+	DATA_TYPE * const dB = &dArr[2];
+	DATA_TYPE * const dResult = &dArr[4];
+	DATA_TYPE * const dX1 = &dResult[1];
+	DATA_TYPE * const dX2 = &dResult[0];
 
 	*dX1 = 0.; // reset the result
 	*dX2 = 0.; // reset the result
 	//printf("x1 = %5.2f; x2 = %5.2f;\r\n", *dX1, *dX2);
-
-	*dA = A;
-	*dB = B;
-	*dC = C;
 	
 	unsigned int * const uX1 = (unsigned int * const)dX1;
 	for (*uX1 = 0; *uX1 < ~0; ++*uX1){
@@ -78,14 +72,14 @@ void run_search(float * const dArr){
 }
 
 
-void printResult(char * const title, float * const dArr, unsigned int runTime, unsigned int runTimeBySeconds){
-	float * const dAC = dArr;
-	float * const dA = &dAC[0];
-	float * const dC = &dAC[1];
-	float * const dB = &dArr[2];
-	float * const dResult = &dArr[4];
-	float * const dX1 = &dResult[1];
-	float * const dX2 = &dResult[0];
+void printResult(char * const title, DATA_TYPE * const dArr, unsigned int runTime, unsigned int runTimeBySeconds){
+	DATA_TYPE * const dAC = dArr;
+	DATA_TYPE * const dA = &dAC[0];
+	DATA_TYPE * const dC = &dAC[1];
+	DATA_TYPE * const dB = &dArr[2];
+	DATA_TYPE * const dResult = &dArr[4];
+	DATA_TYPE * const dX1 = &dResult[1];
+	DATA_TYPE * const dX2 = &dResult[0];
 
 	printf("%s:\r\n", title);
 	printf("%fx^2 + %fx + %f = 0;\r\n", *dA, *dB, *dC);
@@ -99,25 +93,33 @@ void printResult(char * const title, float * const dArr, unsigned int runTime, u
 }
 
 int main() {
-	float * const dArr = (float *)malloc(6 * sizeof(float));
+	DATA_TYPE * const dArr = (DATA_TYPE_ *)malloc(6 * sizeof(DATA_TYPE_));
+	
+	if(!dArr){
+		return 0;
+	}
 
-	float * const dAC = dArr;
-	float * const dA = &dAC[0];
-	float * const dC = &dAC[1];
-	float * const dB = &dArr[2];
-	float * const dResult = &dArr[4];
-	float * const dX1 = &dResult[1];
-	float * const dX2 = &dResult[0];
+	DATA_TYPE * const dAC = dArr;
+	DATA_TYPE * const dA = &dAC[0];
+	DATA_TYPE * const dC = &dAC[1];
+	DATA_TYPE * const dB = &dArr[2];
+	DATA_TYPE * const dResult = &dArr[4];
+	DATA_TYPE * const dX1 = &dResult[1];
+	DATA_TYPE * const dX2 = &dResult[0];
+	
+	*dA = (DATA_TYPE_)A;
+	*dB = (DATA_TYPE_)B;
+	*dC = (DATA_TYPE_)C;	
 
 	float startTime, endTime;
 
 	// compute by the formula with compiler optimization
 	startTime = getCurrentTime();
-	run_native(dArr);
+	REPEATOR(REPEAT_COUNT, run_native(dArr););
 	endTime = getCurrentTime();
 	printResult((char*)"compute by the formula with compiler optimization",
 		dArr,
-		(unsigned int)((endTime - startTime) * (1000000000 / REPEAT_COUNT)), 0);
+		(unsigned int)((endTime - startTime) * (NANOSECONDS_PER_SECOND_NUMBER / REPEAT_COUNT)), 0);
 
 	printf("please wait, the full search takes a few tens of seconds...");
 	startTime = getCurrentTime();
@@ -129,6 +131,6 @@ int main() {
 		0, (unsigned int)(endTime - startTime));
 
 	printf("Press any key to continue . . .");
-	getchar();
+	(void)getchar();
 	return 0;
 }
